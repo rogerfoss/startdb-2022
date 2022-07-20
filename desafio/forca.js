@@ -1,7 +1,8 @@
 class Forca {
- 
-  vidas = 6; //regra 1.
-  estado = 'aguardando chute'; //regra 2.
+  //O jogo deve iniciar com 6 vidas. (regra 1)
+  //O jogo deve iniciar com o estado `aguardando chute`. (regra 2)
+  vidas = 6;
+  estado = 'aguardando chute';
   palavra = [];
   letrasChutadas = []; 
 
@@ -11,30 +12,39 @@ class Forca {
   }
 
   chutar(letra) { 
+    //Todo chute deve conter apenas uma letra, caso tenha mais de uma a jogada deve ser ignorada, ou seja, não deve alterar nenhum estado. (regra 3)
+    if (letra.length > 1) { 
+      console.log("Escolha apenas uma letra");
+      return;
+    } 
+
+    //Caso a letra chutada esteja errada mas já foi chutada anteriormente a jogada deve ser ignorada, ou seja, não deve alterar nenhum estado. (regra 4)
+    if (this.letrasChutadas.includes(letra)) {
+      console.log("Letra já chutada");
+      return;
+    } 
+
+    //Toda chamada ao método chutar deve registrar a letra em letrasChutadas. (regra 5)
+    this.letrasChutadas.push(letra);
     
-    if (letra.length > 1) { //regra 3.
-      return;
-    } 
-
-    if (this.letrasChutadas.includes(letra)) { //regra 4.
-      return;
-    } 
-
-    if (this.palavraSecreta.includes(letra)) { 
-      this.letrasChutadas.push(letra); //regra 5.
-    } else {
-      this.vidas--; //regra 6.
+    //Se a letra chutada não estiver contida na palavra, deve subtrair uma vida. (regra 6)
+    if (!this.palavraSecreta.includes(letra)) { 
+      this.vidas--; 
     }
     
-    for (let i = 0; i < this.palavraSecreta.length; i++) { //regra 7.
+    //Se a letra chutada estiver contida na palavra, deve ser substituida na "palavra" em sua respectiva posição. (regra 7)
+    //Ex.: A palavra secreta é "bala" e o jogador chutou a letra "b", então a palavra que é retornada no método buscarDadosDoJogo, deve ser ["b", "_", "_", "_" ].
+    for (let i = 0; i < this.palavraSecreta.length; i++) {
       if (this.palavraSecreta[i] === letra) {
         this.palavra[i] = letra;    
       }
     }
 
-    if (this.vidas === 0) { //regra 8.
+    //Caso a quantidade de vidas chegue a 0 (zero), o estado do jogo deve mudar para `perdeu` e encerrar o jogo. (regra 8)
+    //Caso a quantidade de vidas seja maior que zero e o jogador acerte a última letra, o estado do jogo deve mudar para `ganhou` e encerrar o jogo. (regra 9)
+    if (this.vidas === 0) {
       this.estado = 'perdeu';
-    } else if (this.palavra.join('') === this.palavraSecreta) { //regra 9.
+    } else if (this.palavra.join('') === this.palavraSecreta) {
       this.estado = 'ganhou';
       } else {
       this.estado = 'aguardando chute';
